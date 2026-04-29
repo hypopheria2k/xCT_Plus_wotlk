@@ -33,7 +33,8 @@ All of the following **issues from the original repository** have been successfu
 
 ### 🌍 Localization (NEW – in progress)
 
-xCT+ has been extended with a new localization system. Currently supported languages:
+xCT+ has been extended with a new **(not finished - WiP!)** localization system. 
+Currently supported languages:
 
 - 🇬🇧 **English** (complete)
 - 🇩🇪 **German**  (partially 50%) needs to be checked.
