@@ -53,7 +53,7 @@ addon.options = {
     spacer0 = {
       order = 1,
       type = 'description',
-      name = "|cffFFFF00Helpful Tips:|r\n\n",
+      name = L["Helpful Tips:"],
       width = 'half',
     },
 
@@ -61,7 +61,7 @@ addon.options = {
       order = 2,
       type = 'description',
       fontSize = 'medium',
-      name = "On the left list, under the |cffFFFF00Startup Message|r checkbox, you can click on the |cff798BDD+ Buttons|r (plus) to show more options.",
+      name = L["Helpful Tip Text"],
       width = 'double',
     },
 
@@ -1044,7 +1044,7 @@ addon.options.args["spellFilter"] = {
 }
 
 addon.options.args["Credits"] = {
-  name = "Credits",
+  name = L["Credits"],
   type = 'group',
   order = 4,
   args = {
@@ -1102,14 +1102,14 @@ addon.options.args["Credits"] = {
 }
 
 addon.options.args["FloatingCombatText"] = {
-  name = "Floating Combat Text",
+  name = L["Floating Combat Text"],
   type = 'group',
   order = 1,
   args = {
     title2 = {
       order = 0,
       type = "description",
-      name = "|cffA0A0A0Some changes might require a full|r |cffD0D000Client Restart|r |cffA0A0A0(completely exit out of WoW). Do not|r |cffD00000Alt+F4|r |cffA0A0A0or|r |cffD00000Command+Q|r |cffA0A0A0or your settings might not save. Use '|r|cff798BDD/exit|r|cffA0A0A0' to close the client.|r\n\n",
+      name = L["FCT Restart Warning"],
       fontSize = "small",
     },
     blizzardFCT = {
@@ -1236,7 +1236,7 @@ addon.options.args["FloatingCombatText"] = {
 }
 
 addon.options.args["Frames"] = {
-  name = "Frames",
+  name = L["Frames"],
   type = 'group',
   order = 0,
   args = {
@@ -1521,7 +1521,7 @@ addon.options.args["Frames"] = {
 
 --[[ XCT+ The Frames: ]]
     general = {
-      name = "|cffFFFFFFGeneral|r",
+      name = L["|cffFFFFFFGeneral|r"],
       type = 'group',
       order = 11,
       childGroups = 'tab',
@@ -1841,7 +1841,7 @@ addon.options.args["Frames"] = {
     },
 
     outgoing = {
-      name = "|cffFFFFFFOutgoing|r",
+      name = L["|cffFFFFFFOutgoing|r"],
       type = 'group',
       order = 12,
       childGroups = 'tab',
@@ -2179,7 +2179,7 @@ addon.options.args["Frames"] = {
     },
 
     critical = {
-      name = "|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r",
+      name = L["|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r"],
       type = 'group',
       order = 13,
       childGroups = 'tab',
@@ -2494,7 +2494,7 @@ addon.options.args["Frames"] = {
     },
 
     damage = {
-      name = "|cffFFFFFFIncoming|r |cff798BDD(Damage)|r",
+      name = L["|cffFFFFFFIncoming|r |cff798BDD(Damage)|r"],
       type = 'group',
       order = 14,
       childGroups = 'tab',
@@ -2757,7 +2757,7 @@ addon.options.args["Frames"] = {
     },
 
     healing = {
-      name = "|cffFFFFFFIncoming|r |cff798BDD(Healing)|r",
+      name = L["|cffFFFFFFIncoming|r |cff798BDD(Healing)|r"],
       type = 'group',
       order = 15,
       childGroups = 'tab',
@@ -3036,7 +3036,7 @@ addon.options.args["Frames"] = {
     },
 
     class = {
-      name = "|cffFFFFFFClass Combo Points|r",
+      name = L["|cffFFFFFFClass Combo Points|r"],
       type = 'group',
       order = 16,
       childGroups = 'tab',
@@ -3173,7 +3173,7 @@ addon.options.args["Frames"] = {
     },
 
     power = {
-      name = "|cffFFFFFFClass Power|r",
+      name = L["|cffFFFFFFClass Power|r"],
       type = 'group',
       order = 17,
       childGroups = 'tab',
@@ -3438,7 +3438,7 @@ addon.options.args["Frames"] = {
     },
 
     procs = {
-      name = "|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r",
+      name = L["|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r"],
       type = 'group',
       order = 18,
       childGroups = 'tab',
@@ -3689,7 +3689,7 @@ addon.options.args["Frames"] = {
     },
 
     loot = {
-      name = "|cffFFFFFFLoot & Money|r",
+      name = L["|cffFFFFFFLoot & Money|r"],
       type = 'group',
       order = 19,
       childGroups = 'tab',

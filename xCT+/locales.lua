@@ -300,6 +300,21 @@ if locale == "deDE" then
         ["This Addon was originally created for WoW 4.3.4 and has been backported to 3.3.5a with all features intact.\n\nSpecial thanks go to the original author Dandruff for making such an amazing Addon available for everyone!"] = "Dieses Addon wurde ursprünglich für WoW 4.3.4 erstellt und vollständig auf 3.3.5a zurückportiert.\n\nBesonderer Dank an den ursprünglichen Autor Dandruff!",
         ["Contact Me"] = "Kontaktiere mich",
         ["You can find the latest version and report issues on GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r"] = "Aktuelle Version und Fehlerberichte auf GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r",
+
+        -- NEUE Lokalisierungen
+        ["Frames"] = "Fenster",
+        ["|cffFFFFFFGeneral|r"] = "|cffFFFFFFAllgemein|r",
+        ["|cffFFFFFFOutgoing|r"] = "|cffFFFFFFAusgehend|r",
+        ["|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r"] = "|cffFFFFFFAusgehend|r |cff798BDD(Kritische Treffer)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Damage)|r"] = "|cffFFFFFFEingehend|r |cff798BDD(Schaden)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Healing)|r"] = "|cffFFFFFFEingehend|r |cff798BDD(Heilung)|r",
+        ["|cffFFFFFFClass Combo Points|r"] = "|cffFFFFFFKlassen Combo Punkte|r",
+        ["|cffFFFFFFClass Power|r"] = "|cffFFFFFFKlassen Ressourcen|r",
+        ["|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r"] = "|cffFFFFFFSpezielle Effekte|r |cff798BDD(Procs)|r",
+        ["|cffFFFFFFLoot & Money|r"] = "|cffFFFFFFBeute & Geld|r",
+        ["Helpful Tips:"] = "|cffFFFF00Hilfreiche Tipps:|r\n\n",
+        ["Helpful Tip Text"] = "In der linken Liste, unter der |cffFFFF00Startmeldung|r Checkbox, kannst du auf die |cff798BDD+ Buttons|r (Plus) klicken, um mehr Optionen anzuzeigen.",
+        ["FCT Restart Warning"] = "|cffA0A0A0Einige Änderungen erfordern einen vollständigen|r |cffD0D000Client Neustart|r |cffA0A0A0(komplett WoW beenden). Nicht|r |cffD00000Alt+F4|r |cffA0A0A0verwenden da Einstellungen sonst nicht gespeichert werden. Nutze '|r|cff798BDD/exit|r|cffA0A0A0' zum beenden.|r\n\n",
     }
 
 elseif locale == "ruRU" then
@@ -600,6 +615,21 @@ elseif locale == "ruRU" then
         ["This Addon was originally created for WoW 4.3.4 and has been backported to 3.3.5a with all features intact.\n\nSpecial thanks go to the original author Dandruff for making such an amazing Addon available for everyone!"] = "Аддон был создан для WoW 4.3.4 и полностью портирован на 3.3.5a.\n\nОсобая благодарность автору Dandruff!",
         ["Contact Me"] = "Связаться со мной",
         ["You can find the latest version and report issues on GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r"] = "Последняя версия и отчёты об ошибках на GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r",
+
+        -- NEW LOCALIZATIONS
+        ["Frames"] = "Окна",
+        ["|cffFFFFFFGeneral|r"] = "|cffFFFFFFОбщие|r",
+        ["|cffFFFFFFOutgoing|r"] = "|cffFFFFFFИсходящие|r",
+        ["|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r"] = "|cffFFFFFFИсходящие|r |cff798BDD(Критические)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Damage)|r"] = "|cffFFFFFFВходящие|r |cff798BDD(Урон)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Healing)|r"] = "|cffFFFFFFВходящие|r |cff798BDD(Исцеление)|r",
+        ["|cffFFFFFFClass Combo Points|r"] = "|cffFFFFFFКомбо очки|r",
+        ["|cffFFFFFFClass Power|r"] = "|cffFFFFFFРесурсы класса|r",
+        ["|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r"] = "|cffFFFFFFСпециальные эффекты|r |cff798BDD(Проки)|r",
+        ["|cffFFFFFFLoot & Money|r"] = "|cffFFFFFFДобыча и золото|r",
+        ["Helpful Tips:"] = "|cffFFFF00Полезные советы:|r\n\n",
+        ["Helpful Tip Text"] = "В левом списке, под флажком |cffFFFF00Сообщение при запуске|r, нажмите на |cff798BDD+ кнопки|r (плюс) чтобы открыть дополнительные опции.",
+        ["FCT Restart Warning"] = "|cffA0A0A0Некоторые изменения требуют полного|r |cffD0D000перезапуска клиента|r |cffA0A0A0(полностью закрыть WoW). Не используйте|r |cffD00000Alt+F4|r |cffA0A0A0иначе настройки не сохранятся. Используйте '|r|cff798BDD/exit|r|cffA0A0A0' для выхода.|r\n\n",
     }
 
 else -- Default: enUS (Fallback)
@@ -885,6 +915,21 @@ else -- Default: enUS (Fallback)
         ["This Addon was originally created for WoW 4.3.4 and has been backported to 3.3.5a with all features intact.\n\nSpecial thanks go to the original author Dandruff for making such an amazing Addon available for everyone!"] = "This Addon was originally created for WoW 4.3.4 and has been backported to 3.3.5a with all features intact.\n\nSpecial thanks go to the original author Dandruff for making such an amazing Addon available for everyone!",
         ["Contact Me"] = "Contact Me",
         ["You can find the latest version and report issues on GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r"] = "You can find the latest version and report issues on GitHub:\n|cff798BDDhttps://github.com/Hypopheria2k/xCT_Plus_wotlk|r",
+
+        -- DEFAULT LOCALIZATIONS
+        ["Frames"] = "Frames",
+        ["|cffFFFFFFGeneral|r"] = "|cffFFFFFFGeneral|r",
+        ["|cffFFFFFFOutgoing|r"] = "|cffFFFFFFOutgoing|r",
+        ["|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r"] = "|cffFFFFFFOutgoing|r |cff798BDD(Criticals)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Damage)|r"] = "|cffFFFFFFIncoming|r |cff798BDD(Damage)|r",
+        ["|cffFFFFFFIncoming|r |cff798BDD(Healing)|r"] = "|cffFFFFFFIncoming|r |cff798BDD(Healing)|r",
+        ["|cffFFFFFFClass Combo Points|r"] = "|cffFFFFFFClass Combo Points|r",
+        ["|cffFFFFFFClass Power|r"] = "|cffFFFFFFClass Power|r",
+        ["|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r"] = "|cffFFFFFFSpecial Effects|r |cff798BDD(Procs)|r",
+        ["|cffFFFFFFLoot & Money|r"] = "|cffFFFFFFLoot & Money|r",
+        ["Helpful Tips:"] = "|cffFFFF00Helpful Tips:|r\n\n",
+        ["Helpful Tip Text"] = "On the left list, under the |cffFFFF00Startup Message|r checkbox, you can click on the |cff798BDD+ Buttons|r (plus) to show more options.",
+        ["FCT Restart Warning"] = "|cffA0A0A0Some changes might require a full|r |cffD0D000Client Restart|r |cffA0A0A0(completely exit out of WoW). Do not|r |cffD00000Alt+F4|r |cffA0A0A0or your settings might not save. Use '|r|cff798BDD/exit|r|cffA0A0A0' to close the client.|r\n\n",
     }
 end
 
