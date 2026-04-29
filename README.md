@@ -33,13 +33,13 @@ All of the following **issues from the original repository** have been successfu
 
 ### 🌍 Localization (NEW – in progress)
 
-xCT+ has been extended with a complete localization system. Currently supported languages:
+xCT+ has been extended with a new localization system. Currently supported languages:
 
 - 🇬🇧 **English** (complete)
-- 🇩🇪 **German** (complete)
-- 🇷🇺 **Russian** (complete)
+- 🇩🇪 **German**  (partially 50%) needs to be checked.
+- 🇷🇺 **Russian** (partially ??%) with AI needs to be checked!
 
-The translations cover the **entire configuration menu**. Additional languages can be easily added via the `locales.lua` file – this file also serves as a **template for new translations**.
+The translations covers partially the **entire configuration menu**. Additional languages can be easily added via the `locales.lua` file – this file also serves as a **template for new translations**.
 
 > 💬 **Interested in contributing another language?**  
 > Simply copy the English or German block in `locales.lua` and replace the values. Pull requests are always welcome!
