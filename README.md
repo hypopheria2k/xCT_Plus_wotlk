@@ -37,7 +37,7 @@ xCT+ has been extended with a new **(not finished - WiP!)** localization system.
 Currently supported languages:
 
 - 🇬🇧 **English** (complete)
-- 🇩🇪 **German**  (partially 50%) needs to be checked.
+- 🇩🇪 **German**  (mostly finished 90%) few texts need to be translated.
 - 🇷🇺 **Russian** (partially ??%) with AI needs to be checked!
 
 The translations covers partially the **entire configuration menu**. Additional languages can be easily added via the `locales.lua` file – this file also serves as a **template for new translations**.
