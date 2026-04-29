@@ -1,24 +1,86 @@
-[![Game Version](https://img.shields.io/badge/wow-3.3.5-blue.svg)](https://github.com/Barsoomx/xCT_Plus_wotlk/tree/master)
-[![Discord](https://discordapp.com/api/guilds/598993375479463946/widget.png?style=shield)](https://discord.gg/uMbjr87)
+# ✨ xCT+ | Remastered for Wrath of the Lich King (3.3.5a)
 
-xCT+ is a combat text replacement (like MSBT).
-Backported from retail Pandaria, this version compared to other backports offers control over settings in-game and is more minimalistic and anti-spammy than MSBT
+![Version](https://img.shields.io/badge/version-3.8.0--remaster-blue)
+![Game](https://img.shields.io/badge/game-3.3.5a-orange)
+![Status](https://img.shields.io/badge/status-beta-yellow)
 
-# xCT+ 3.7.1 backport 
+**xCT+** is a highly sophisticated combat text addon that completely replaces and vastly improves upon Blizzard's default floating combat text.  
+This version is a **remaster of Barsoom's popular backport**, itself based on Dandruff's original xCT+ (MoP 5.4.8). The addon has been carefully overhauled, enhanced, and localized for the **Wrath of the Lich King (3.3.5a)** environment.
 
-by [Barsoom](https://forum.wowcircle.net/member.php?u=261041)
+---
 
-xCT+ is immensely based off the add-on xCT by braindump (aka Affli). It strives to be as minimalistic as possible while maintaining ease of use. That is why, introduced in version 3, you can now configure all settings while in-game.
+## ⚙️ Changes & Fixed Bugs (since the original backport)
 
-Overall, xCT+ is a replacement for Blizzard’s scrolling combat text. It is superior to the default combat text because xCT+ organizes incoming healing, incoming damage, and outgoing damage/healing into their own frames, while minimizing spam.
- 
-# FEATURES
+All of the following **issues from the original repository** have been successfully resolved.
 
-For those that have used Affli’s xCT Add-On, xCT+ expands the functionality of its predecessor. New features include:
+### 🐛 Resolved Issues
 
-* An In-Game Configuration Tool
-* Frames for tracking Criticals, Loot and Money, Spell Procs, Unit Power (Mana), and Class Combo Points
-* A grid when positioning the frames
-* Tons of new options and features
-* A redesigned Spell Merger for those Spammy Spells
-* Setting Profiles
+| # | Issue | Status |
+|---|-------|--------|
+| 1 | **[Missing icons for incoming damage / healing](https://github.com/Barsoomx/xCT_Plus_wotlk/issues/1)** | ✅ Fixed |
+| 2 | **[Healing Stream Totem shows totem name instead of owner (healer)](https://github.com/Barsoomx/xCT_Plus_wotlk/issues/2)** | ✅ Fixed |
+| 3 | **[Fire totems (Magma, Searing, Fire Elemental) show no outgoing damage](https://github.com/Barsoomx/xCT_Plus_wotlk/issues/3)** | ✅ Fixed |
+| 4 | **[Incoming Icons for damage and healing (duplicate)](https://github.com/Barsoomx/xCT_Plus_wotlk/issues/4)** | ✅ Fixed |
+
+### 🔧 Additional Bugfixes & Improvements
+
+- **Duplicate display of incoming damage/healing** eliminated when the new icons are enabled.
+- **Periodic healing (HoTs)** is now correctly routed to its own periodic healing frame (instead of the normal healing frame).
+- **Miss types (Dodge, Parry, Immune, etc.) and Resist/Block/Absorb** no longer appear doubled and are handled correctly.
+- **Guardian cache (totems, pets)** now stores owners for **all** player totems, not just your own – healer names are displayed correctly.
+- **Outgoing damage from all owned totems/guardians** is now correctly detected and displayed.
+- Various **UI and options corrections** (e.g. unique `order` values, correct locale linking).
+
+### 🌍 Localization (NEW – in progress)
+
+xCT+ has been extended with a complete localization system. Currently supported languages:
+
+- 🇬🇧 **English** (complete)
+- 🇩🇪 **German** (complete)
+- 🇷🇺 **Russian** (complete)
+
+The translations cover the **entire configuration menu**. Additional languages can be easily added via the `locales.lua` file – this file also serves as a **template for new translations**.
+
+> 💬 **Interested in contributing another language?**  
+> Simply copy the English or German block in `locales.lua` and replace the values. Pull requests are always welcome!
+
+---
+
+## 📦 Installation
+
+1. Download the latest version as a ZIP file.
+2. Extract the `xCT+` folder into your `WoW/Interface/AddOns/` directory.
+3. Make sure the original xCT is either disabled or deleted.
+4. Launch WoW and configure the addon using `/xct`.
+
+---
+
+## 🧪 Beta Status & Testing
+
+This remaster is currently in a **beta phase**.  
+While the issues listed above have been fixed and many hours of work went into stabilization, undiscovered problems may still exist.
+
+> ⚠️ **Please test thoroughly and provide feedback!**  
+> Bug reports, ideas, or suggestions are very welcome on the [Issues page](https://github.com/hypopheria2k/xCT_Plus_wotlk/issues).
+
+---
+
+## 👏 Credits & Acknowledgements
+
+- **Dandruff** – Original author of xCT+ (Pandaria 5.4.8)
+- **Barsoom** – Initial backport to WotLK 3.3.5a
+- **Hypopheria** – Remaster, bugfixes & localization (2026)
+
+Special thanks also go to everyone who helped preserve and improve the original addon.
+
+---
+
+## 🔗 Links
+
+- 🐙 GitHub Repository: [https://github.com/hypopheria2k/xCT_Plus_wotlk](https://github.com/hypopheria2k/xCT_Plus_wotlk)
+- 🐛 Report Bugs: [Issues](https://github.com/hypopheria2k/xCT_Plus_wotlk/issues)
+- 💬 Discord (Barsoom's Community): [https://discord.gg/uMbjr87](https://discord.gg/uMbjr87)
+
+---
+
+*"May your numbers always be visible and your icons always match."* ✌️
