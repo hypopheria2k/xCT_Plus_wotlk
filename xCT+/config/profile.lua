@@ -60,6 +60,8 @@ addon.defaults = {
       showPositions = true,
       frameStrata = "5HIGH",
     },
+    
+    showIncomingIcons = true,
 
     megaDamage = {
       thousandSymbol = "|cffFF8000K|r",

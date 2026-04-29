@@ -33,7 +33,12 @@ x.spellCache = {
 }
 
 --[=====================================================[
- Holds player info; use AddOn:UpdatePlayer()
+  Caches guardian (totem, pet) owner names by GUID
+--]=====================================================]
+x.guardianOwner = {}
+
+--[=====================================================[
+  Holds player info; use AddOn:UpdatePlayer()
 --]=====================================================]
 x.player = {
   unit = "player",
@@ -317,15 +322,86 @@ local COMBATLOG_FILTER_MY_VEHICLE = bit.bor( COMBATLOG_OBJECT_AFFILIATION_MINE,
 function x.OnCombatTextEvent(self, event, ...)
   if event == "COMBAT_LOG_EVENT_UNFILTERED" then
     local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1, ...)
+    local spellID = select(9, ...)
 
-    if sourceGUID == x.player.guid or ( ShowPetDamage() and sourceGUID == UnitGUID("pet") ) or sourceFlags == COMBATLOG_FILTER_MY_VEHICLE then
+    -- Handle outgoing events: player, pet, vehicle and player-owned guardians/totems
+    if sourceGUID == x.player.guid or
+      ( ShowPetDamage() and (
+        sourceGUID == UnitGUID("pet") or
+        sourceFlags == COMBATLOG_FILTER_MY_VEHICLE or
+        (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) ~= 0 and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) ~= 0)
+      )) then
       if x.outgoing_events[eventType] then
         x.outgoing_events[eventType](...)
       end
     end
 
+    -- Track guardian summons and their owners (alle Spieler-Totems erfassen, nicht nur eigene)
+    if eventType == "SPELL_SUMMON" then
+      if bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PLAYER) ~= 0 and bit.band(destFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) ~= 0 then
+        x.guardianOwner[destGUID] = sourceName
+      end
+    end
+
+    -- Cleanup cache when guardians die
+    if eventType == "UNIT_DIED" or eventType == "PARTY_KILL" then
+      x.guardianOwner[destGUID] = nil
+    end
+
+    -- Handle incoming events (player as target)
+    if destGUID == x.player.guid and x.db.profile.showIncomingIcons then
+      -- Incoming damage events
+      if eventType == "SPELL_DAMAGE" or eventType == "SPELL_PERIODIC_DAMAGE" then
+        local amount = select(12, ...)
+        local critical = select(18, ...)
+        if critical then
+          x.combat_events["SPELL_DAMAGE_CRIT"](amount, spellID, eventType)
+        else
+          x.combat_events["SPELL_DAMAGE"](amount, spellID, eventType)
+        end
+      elseif eventType == "SWING_DAMAGE" then
+        local amount = select(9, ...)
+        local critical = select(15, ...)
+        if critical then
+          x.combat_events["DAMAGE_CRIT"](amount, 0, eventType)
+        else
+          x.combat_events["DAMAGE"](amount, 0, eventType)
+        end
+      -- Incoming healing events
+      elseif eventType == "SPELL_HEAL" or eventType == "SPELL_PERIODIC_HEAL" then
+        local amount = select(12, ...)
+        local critical = select(18, ...)
+        local healerName = x.guardianOwner[sourceGUID] or sourceName
+        
+        if eventType == "SPELL_PERIODIC_HEAL" then
+          -- Periodic heals always use PERIODIC_HEAL handler (both normal and crit)
+          x.combat_events["PERIODIC_HEAL"](healerName, amount, spellID, eventType)
+        else
+          if critical then
+            x.combat_events["HEAL_CRIT"](healerName, amount, spellID, eventType)
+          else
+            x.combat_events["HEAL"](healerName, amount, spellID, eventType)
+          end
+        end
+      end
+    end
+
   elseif event == "COMBAT_TEXT_UPDATE" then
     local subevent, arg2, arg3 = ...
+    
+    -- Skip events that are already handled via combat log when incoming icons are enabled
+    if x.db.profile.showIncomingIcons then
+      local skipEvents = {
+        -- Only skip events that are actually processed through combat log
+        DAMAGE = true, DAMAGE_CRIT = true,
+        SPELL_DAMAGE = true, SPELL_DAMAGE_CRIT = true,
+        HEAL = true, HEAL_CRIT = true, PERIODIC_HEAL = true
+      }
+      if skipEvents[subevent] then
+        return
+      end
+    end
+    
     if x.combat_events[subevent] then
       x.combat_events[subevent](arg2, arg3)
     end
@@ -338,15 +414,15 @@ function x.OnCombatTextEvent(self, event, ...)
 end
 
 --[=====================================================[
- AddOn:GetSpellTextureFormatted(
-    spellID,     [number] - The spell ID you want the icon for
-    iconSize,    [number] - The format size of the icon
-  )
+  AddOn:GetSpellTextureFormatted(
+     spellID,     [number] - The spell ID you want the icon for
+     iconSize,    [number] - The format size of the icon
+   )
   Returns:
-    message,     [string] - the message contains the formatted icon
+     message,     [string] - the message contains the formatted icon
 
-    Formats an icon quickly for use when outputing to
-  a combat text frame.
+     Formats an icon quickly for use when outputing to
+   a combat text frame.
 --]=====================================================]
 function x:GetSpellTextureFormatted(spellID, iconSize)
   local message = ""
@@ -373,6 +449,42 @@ function x:GetSpellTextureFormatted(spellID, iconSize)
   end
 
   return message
+end
+
+--[=====================================================[
+  AddOn:GetIncomingSpellIcon(
+     spellID,     [number] - Spell ID from combat log
+     eventType,   [string] - Damage or healing event type
+     iconSize,    [number] - Icon size (default 18)
+   )
+  Returns:
+     iconString,  [string] - Formatted icon text string
+
+  Gets spell icon with proper fallbacks for incoming damage
+  and healing events. Returns empty string if icons disabled.
+--]=====================================================]
+function x:GetIncomingSpellIcon(spellID, eventType, iconSize)
+  if not x.db.profile.showIncomingIcons then
+    return ""
+  end
+  
+  iconSize = iconSize or 18
+  local icon = nil
+  
+  if spellID and spellID ~= 0 then
+    icon = GetSpellTexture(spellID)
+  end
+  
+  if not icon then
+    -- Fallback icons
+    if eventType and eventType:find("HEAL") then
+      icon = "Interface\\Icons\\Spell_Holy_Heal"
+    else
+      icon = "Interface\\Icons\\INV_Sword_04"
+    end
+  end
+  
+  return sformat(format_spell_icon, icon, iconSize, iconSize) .. "  "
 end
 
 --[=====================================================[
@@ -525,21 +637,25 @@ end
  Event handlers - Combat Text Events
 --]=====================================================]
 x.combat_events = {
-  ["DAMAGE"] = function(amount)
+  ["DAMAGE"] = function(amount, spellID, eventType)
       if FilterIncomingDamage(amount) then return end
-      x:AddMessage("damage", sformat(format_fade, x:Abbreviate(amount,"damage")), "damageTaken")
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "DAMAGE")
+      x:AddMessage("damage", icon .. sformat(format_fade, x:Abbreviate(amount,"damage")), "damageTaken")
     end,
-  ["DAMAGE_CRIT"] = function(amount)
+  ["DAMAGE_CRIT"] = function(amount, spellID, eventType)
       if FilterIncomingDamage(amount) then return end
-      x:AddMessage("damage", sformat(format_fade, x:Abbreviate(amount,"damage")), "damageTakenCritical")
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "DAMAGE")
+      x:AddMessage("damage", icon .. sformat(format_fade, x:Abbreviate(amount,"damage")), "damageTakenCritical")
     end,
-  ["SPELL_DAMAGE"] = function(amount)
+  ["SPELL_DAMAGE"] = function(amount, spellID, eventType)
       if FilterIncomingDamage(amount) then return end
-      x:AddMessage("damage", sformat(format_fade, x:Abbreviate(amount,"damage")), "spellDamageTaken")
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "DAMAGE")
+      x:AddMessage("damage", icon .. sformat(format_fade, x:Abbreviate(amount,"damage")), "spellDamageTaken")
     end,
-  ["SPELL_DAMAGE_CRIT"] = function(amount)
+  ["SPELL_DAMAGE_CRIT"] = function(amount, spellID, eventType)
       if FilterIncomingDamage(amount) then return end
-      x:AddMessage("damage", sformat(format_fade, x:Abbreviate(amount,"damage")), "spellDamageTakenCritical")
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "DAMAGE")
+      x:AddMessage("damage", icon .. sformat(format_fade, x:Abbreviate(amount,"damage")), "spellDamageTakenCritical")
     end,
   -- ["ABSORB_ADDED"] = function(healer_name, amount)
   --     local message = sformat(format_gain, x:Abbreviate(amount,"healing"))
@@ -567,10 +683,11 @@ x.combat_events = {
 
   --     x:AddMessage("healing", message, "shieldTaken")
   --   end,
-  ["HEAL"] = function(healer_name, amount)
+  ["HEAL"] = function(healer_name, amount, spellID, eventType)
       if FilterIncomingHealing(amount) then return end
 
       local message = sformat(format_gain, x:Abbreviate(amount,"healing"))
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "HEAL")
 
       if not ShowHealingRealmNames() then
         healer_name = smatch(healer_name, format_remove_realm) or healer_name
@@ -593,13 +710,14 @@ x.combat_events = {
             message = healer_name .. " " .. message
           end
         end
-        x:AddMessage("healing", message, "healingTaken")
+        x:AddMessage("healing", icon .. message, "healingTaken")
       end
     end,
-  ["HEAL_CRIT"] = function(healer_name, amount)
+  ["HEAL_CRIT"] = function(healer_name, amount, spellID, eventType)
       if FilterIncomingHealing(amount) then return end
 
       local message = sformat(format_gain, x:Abbreviate(amount,"healing"))
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "HEAL")
 
       if not ShowHealingRealmNames() then
         healer_name = smatch(healer_name, format_remove_realm) or healer_name
@@ -622,13 +740,14 @@ x.combat_events = {
             message = healer_name .. " " .. message
           end
         end
-        x:AddMessage("healing", message, "healingTakenCritical")
+        x:AddMessage("healing", icon .. message, "healingTakenCritical")
       end
     end,
-  ["PERIODIC_HEAL"] = function(healer_name, amount)
+  ["PERIODIC_HEAL"] = function(healer_name, amount, spellID, eventType)
       if FilterIncomingHealing(amount) then return end
 
       local message = sformat(format_gain, x:Abbreviate(amount,"healing"))
+      local icon = x:GetIncomingSpellIcon(spellID, eventType or "HEAL")
 
       if not ShowHealingRealmNames() then
         healer_name = smatch(healer_name, format_remove_realm) or healer_name
@@ -652,7 +771,7 @@ x.combat_events = {
           end
         end
 
-        x:AddMessage("healing", message, "healingTakenPeriodic")
+        x:AddMessage("healing", icon .. message, "healingTakenPeriodic")
       end
     end,
   ["SPELL_ACTIVE"] = function(spellName)
