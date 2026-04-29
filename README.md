@@ -80,7 +80,6 @@ Special thanks also go to everyone who helped preserve and improve the original 
 
 - 🐙 GitHub Repository: [https://github.com/hypopheria2k/xCT_Plus_wotlk](https://github.com/hypopheria2k/xCT_Plus_wotlk)
 - 🐛 Report Bugs: [Issues](https://github.com/hypopheria2k/xCT_Plus_wotlk/issues)
-- 💬 Discord (Barsoom's Community): [https://discord.gg/uMbjr87](https://discord.gg/uMbjr87)
 
 ---
 
