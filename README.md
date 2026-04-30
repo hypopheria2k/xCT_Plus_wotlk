@@ -20,7 +20,7 @@ This **remaster** builds upon Barsoom's popular backport (based on Dandruff's or
 - **Incoming healing with names** – Optionally class-colored, with realm name support
 - **Spell icons on outgoing damage/healing**
 - **Overkill and Overheal tracking** (toggleable)
-- **Localization-ready** – Currently English, German, and Russian (more translations welcome)
+- **Localization-ready** – Currently English, German, Russian, and Spanish (more translations welcome)
 
 ---
 
@@ -66,6 +66,19 @@ All previously reported issues from the original backport have been resolved, al
 
 ---
 
+## 📦 Installation & Profile Compatibility
+
+1. [Download](https://github.com/hypopheria2k/xCT_Plus_wotlk) the latest version
+2. Extract the `xCT+` folder into `WoW/Interface/AddOns/`
+3. Make sure the original `xCT` addon is disabled or removed
+4. Launch WoW and type `/xct` to open the configuration
+
+> 💾 **Upgrading from a previous xCT+ version?**  
+> Your existing profiles and frame layouts are fully compatible. You can keep using your old settings without any changes.  
+> Nevertheless, we recommend **backing up your `WTF/Account/.../SavedVariables/xCTSavedDB.lua`** before updating – just to be on the safe side.
+
+---
+
 ## 🌍 Localization (Work in Progress)
 
 The entire configuration menu can be translated via `locales.lua`. Currently included:
@@ -75,18 +88,10 @@ The entire configuration menu can be translated via `locales.lua`. Currently inc
 | 🇬🇧 English | ✅ Complete |
 | 🇩🇪 German | 🟡 ~90% (few texts remaining) |
 | 🇷🇺 Russian | 🟠 ~70% (AI-generated, needs verification) |
+| 🇪🇸 Spanish | 🟠 ~90% (AI-generated, needs verification) |
 
 > 💬 **Want to add or improve a language?**  
 > Copy the English or German block in `locales.lua`, translate the values, and submit a pull request – you'll be credited!
-
----
-
-## 📦 Installation
-
-1. [Download](https://github.com/hypopheria2k/xCT_Plus_wotlk) the latest version
-2. Extract the `xCT+` folder into `WoW/Interface/AddOns/`
-3. Make sure the original `xCT` addon is disabled or removed
-4. Launch WoW and type `/xct` to open the configuration
 
 ---
 
@@ -96,7 +101,7 @@ This remaster is currently in **beta**. While the known issues have been fixed a
 
 **Planned / considered for future updates:**
 - More options for incoming icons (size, position)
-- Proper Russian translation verification
+- Proper Russian and Spanish translation verification
 - Overheal display (similar to Overkill)
 - Visual test mode improvements
 
