@@ -5,7 +5,7 @@ local locale = GetLocale()
 if locale == "deDE" then
     xCT_Plus_L = {
         -- Incoming Icons
-        ["Incoming damage icons"] = "Eingehende Schaden Icons",
+        ["Incoming damage icons"] = "Icons für eingehenden Schaden",
         ["Show spell icons on incoming damage and healing"] = "Zeige Zauber Icons bei eingehendem Schaden und Heilung",
 
         -- Hauptoptionen
@@ -315,6 +315,10 @@ if locale == "deDE" then
         ["Helpful Tips:"] = "|cffFFFF00Hilfreiche Tipps:|r\n\n",
         ["Helpful Tip Text"] = "In der linken Liste, unter der |cffFFFF00Startmeldung|r Checkbox, kannst du auf die |cff798BDD+ Buttons|r (Plus) klicken, um mehr Optionen anzuzeigen.",
         ["FCT Restart Warning"] = "|cffA0A0A0Einige Änderungen erfordern einen vollständigen|r |cffD0D000Client Neustart|r |cffA0A0A0(komplett WoW beenden). Nicht|r |cffD00000Alt+F4|r |cffA0A0A0verwenden da Einstellungen sonst nicht gespeichert werden. Nutze '|r|cff798BDD/exit|r|cffA0A0A0' zum beenden.|r\n\n",
+        
+        -- Overkill
+        ["Overkill format"] = " (Overkill: %s)",
+        ["Show Overkill"] = "Overkill anzeigen",
     }
 
 elseif locale == "ruRU" then
@@ -630,6 +634,10 @@ elseif locale == "ruRU" then
         ["Helpful Tips:"] = "|cffFFFF00Полезные советы:|r\n\n",
         ["Helpful Tip Text"] = "В левом списке, под флажком |cffFFFF00Сообщение при запуске|r, нажмите на |cff798BDD+ кнопки|r (плюс) чтобы открыть дополнительные опции.",
         ["FCT Restart Warning"] = "|cffA0A0A0Некоторые изменения требуют полного|r |cffD0D000перезапуска клиента|r |cffA0A0A0(полностью закрыть WoW). Не используйте|r |cffD00000Alt+F4|r |cffA0A0A0иначе настройки не сохранятся. Используйте '|r|cff798BDD/exit|r|cffA0A0A0' для выхода.|r\n\n",
+        
+        -- Overkill
+        ["Overkill format"] = " (избыточный урон: %s)",
+        ["Show Overkill"] = "Показывать избыточный урон",
     }
 
 else -- Default: enUS (Fallback)
@@ -930,6 +938,10 @@ else -- Default: enUS (Fallback)
         ["Helpful Tips:"] = "|cffFFFF00Helpful Tips:|r\n\n",
         ["Helpful Tip Text"] = "On the left list, under the |cffFFFF00Startup Message|r checkbox, you can click on the |cff798BDD+ Buttons|r (plus) to show more options.",
         ["FCT Restart Warning"] = "|cffA0A0A0Some changes might require a full|r |cffD0D000Client Restart|r |cffA0A0A0(completely exit out of WoW). Do not|r |cffD00000Alt+F4|r |cffA0A0A0or your settings might not save. Use '|r|cff798BDD/exit|r|cffA0A0A0' to close the client.|r\n\n",
+        
+        -- Overkill
+        ["Overkill format"] = " (overkill: %s)",
+        ["Show Overkill"] = "Show Overkill",
     }
 end
 

@@ -31,6 +31,23 @@ All of the following **issues from the original repository** have been successfu
 - **Outgoing damage from all owned totems/guardians** is now correctly detected and displayed.
 - Various **UI and options corrections** (e.g. unique `order` values, correct locale linking).
 
+---
+
+## 🩸 Overkill Indicator (new)
+
+When a killing blow deals more damage than the target has remaining health, the excess damage is now displayed directly in the combat text.
+
+- Works for all outgoing damage types (melee swings, ranged attacks, spells, and periodic damage)
+- Respects the active abbreviation / number formatting
+- Displayed on both the *Outgoing* and *Critical* frame (if not merged)
+
+**Configuration**  
+The overkill indicator can be toggled in the options:  
+`Frames` → `Outgoing` → `Special Tweaks` → **Show Overkill**  
+(Enabled by default)
+
+---
+
 ### 🌍 Localization (NEW – in progress)
 
 xCT+ has been extended with a new **(not finished - WiP!)** localization system. 
@@ -47,7 +64,15 @@ The translations covers partially the **entire configuration menu**. Additional 
 
 ---
 
-## 📦 Installation
+### v3.8.0 – Overkill Indicator
+
+- Added optional overkill display: killing blows now show excess damage in parentheses
+- New option in Frames → Outgoing → Special Tweaks → Show Overkill (enabled by default)
+- Locales updated for English, German, and Russian
+
+---
+
+### 📦 Installation
 
 1. Download the latest version as a ZIP file.
 2. Extract the `xCT+` folder into your `WoW/Interface/AddOns/` directory.

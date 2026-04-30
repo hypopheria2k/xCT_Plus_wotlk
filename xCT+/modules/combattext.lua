@@ -1265,7 +1265,7 @@ x.outgoing_events = {
   ["SWING_DAMAGE"] = function(...)
       if not ShowDamage() then return end
 
-      local _, _, sourceGUID, _, sourceFlags, _, _, _, amount, _, _, _, _, _, critical = ...
+      local _, _, sourceGUID, _, sourceFlags, _, _, _, amount, overkill, _, _, _, _, _, critical = ...
 
       local outputFrame, message, outputColor = "outgoing", x:Abbreviate(amount, "outgoing"), "genericDamage"
       local merged, critMessage = false, nil
@@ -1304,6 +1304,16 @@ x.outgoing_events = {
       if merged and not critical then
         return
       end
+      
+      -- Overkill
+      if x.db.profile.frames.outgoing.enableOverkill and overkill and overkill > 0 then
+          local overkillText = xCT_Plus_L["Overkill format"]:format(x:Abbreviate(overkill, outputFrame))
+          if critMessage then
+              critMessage = critMessage .. overkillText
+          else
+              message = message .. overkillText
+          end
+      end
 
       -- Add Icons
       if x.db.profile.frames[outputFrame].iconsEnabled then
@@ -1320,7 +1330,7 @@ x.outgoing_events = {
   ["RANGE_DAMAGE"] = function(...)
       if not ShowDamage() then return end
 
-      local _, _, sourceGUID, _, sourceFlags, _, _, _, spellID, _, _, amount, _, _, _, _, _, critical = ...
+      local _, _, sourceGUID, _, sourceFlags, _, _, _, spellID, _, _, amount, overkill, _, _, _, _, _, critical = ...
       local outputFrame, message, outputColor = "outgoing", x:Abbreviate(amount, "outgoing"), "genericDamage"
       local merged, critMessage = false, nil
 
@@ -1400,7 +1410,7 @@ x.outgoing_events = {
   ["SPELL_DAMAGE"] = function(...)
       if not ShowDamage() then return end
 
-      local _, _, sourceGUID, _, sourceFlags, destGUID, _, _, spellID, _, spellSchool, amount, _, _, _, _, _, critical = ...
+      local _, _, sourceGUID, _, sourceFlags, destGUID, _, _, spellID, _, spellSchool, amount, overkill, _, _, _, _, _, critical = ...
       local outputFrame, message, outputColor = "outgoing", x:Abbreviate(amount, "outgoing"), "genericDamage"
       local merged = false
 
@@ -1440,6 +1450,12 @@ x.outgoing_events = {
       elseif merged then  -- return merged, non-crits
         return
       end
+      
+      -- Overkill
+      if x.db.profile.frames.outgoing.enableOverkill and overkill and overkill > 0 then
+          local overkillText = xCT_Plus_L["Overkill format"]:format(x:Abbreviate(overkill, outputFrame))
+          message = message .. overkillText
+      end
 
       -- Add Icons
       if x.db.profile.frames[outputFrame].iconsEnabled then
@@ -1456,7 +1472,7 @@ x.outgoing_events = {
   ["SPELL_PERIODIC_DAMAGE"] = function(...)
       if not ShowDamage() or not ShowDots() then return end
 
-      local _, _, sourceGUID, _, sourceFlags, destGUID, _, _, spellID, _, spellSchool, amount, _, _, _, _, _, critical = ...
+      local _, _, sourceGUID, _, sourceFlags, destGUID, _, _, spellID, _, spellSchool, amount, overkill, _, _, _, _, _, critical = ...
       local outputFrame, message, outputColor = "outgoing", x:Abbreviate(amount, "outgoing"), "genericDamage"
       local merged = false
 

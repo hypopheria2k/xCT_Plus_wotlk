@@ -2164,8 +2164,16 @@ addon.options.args["Frames"] = {
               get = get2,
               set = set2,
             },
+            enableOverkill = {
+                order = 8,
+                type = 'toggle',
+                name = L["Show Overkill"],
+                desc = "Zeigt den überschüssigen Schaden beim Todesstoß an.",
+                get = function(info) return x.db.profile.frames.outgoing.enableOverkill end,
+                set = function(info, value) x.db.profile.frames.outgoing.enableOverkill = value end,
+            },
             enableMisses = {
-              order = 8,
+              order = 9,
               type = 'toggle',
               name = L["Show Miss Types"],
               desc = L["Display 'Miss', 'Dodge', 'Parry' when you miss your target."],

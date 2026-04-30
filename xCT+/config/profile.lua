@@ -225,6 +225,7 @@ addon.defaults = {
         ["enableDotDmg"] = true,
         ["enableHots"] = true,
         ["enableImmunes"] = true,
+        ["enableOverkill"] = true,
         ["enableMisses"] = true,
       },
 
