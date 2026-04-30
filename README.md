@@ -46,6 +46,8 @@ The overkill indicator can be toggled in the options:
 `Frames` → `Outgoing` → `Special Tweaks` → **Show Overkill**  
 (Enabled by default)
 
+- Locales updated for English, German, and Russian
+
 ---
 
 ### 🌍 Localization (NEW – in progress)
@@ -61,14 +63,6 @@ The translations covers partially the **entire configuration menu**. Additional 
 
 > 💬 **Interested in contributing another language?**  
 > Simply copy the English or German block in `locales.lua` and replace the values. Pull requests are always welcome!
-
----
-
-### v3.8.0 – Overkill Indicator
-
-- Added optional overkill display: killing blows now show excess damage in parentheses
-- New option in Frames → Outgoing → Special Tweaks → Show Overkill (enabled by default)
-- Locales updated for English, German, and Russian
 
 ---
 
