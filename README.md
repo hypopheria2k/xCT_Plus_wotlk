@@ -60,6 +60,9 @@ When a killing blow deals more damage than the target has remaining health, the 
 `Frames` → `Outgoing` → `Special Tweaks` → **Show Overkill**  
 (Enabled by default)
 
+<img width="254" height="140" alt="Screenshot 2026-05-01 184352" src="https://github.com/user-attachments/assets/b3b14c57-0c13-4d53-bd41-e4f8ccee79d1" />
+
+
 ### Overheal
 When a heal restores more health than the target was missing, the wasted amount is shown.
 
