@@ -8,7 +8,7 @@
 
  [=====================================]
  [  Author: Dandruff @ Whisperwind-US  ]
- [  xCT+ Version 3.x.x                 ]
+ [  xCT+ Version 3.8.5                 ]
  [  ©2012. All Rights Reserved.        ]
  [====================================]]
 
@@ -26,6 +26,10 @@ random(time()); random(); random(time())
 
 -- Shorten my handle
 local x = addon.engine
+
+local GetTime, UnitExists = GetTime, UnitExists
+
+local colorRGBCache = {}
 
 -- Store my frames
 x.frames = { }
@@ -183,7 +187,14 @@ function x:UpdateFrames(specificFrame)
 			end
 
 			-- Font Template
-			f:SetFont(LSM:Fetch("font", settings.font), settings.fontSize, ssub(settings.fontOutline, 2))
+			local fontPath = LSM:Fetch("font", settings.font)
+			local locale = GetLocale()
+			if locale == "zhCN" then
+			    fontPath = "Fonts\\ARKai_T.ttf"
+			elseif locale == "zhTW" then
+			    fontPath = "Fonts\\bKAI00M.ttf"
+			end
+			f:SetFont(fontPath, settings.fontSize, ssub(settings.fontOutline, 2))
 
 			if settings.fontJustify then
 				f:SetJustifyH(settings.fontJustify)
@@ -227,15 +238,19 @@ end
 --	the frames will be cleared.
 -- =====================================================
 function x:Clear(specificFrame)
-	if not specificFrame then
-		for framename, settings in pairs(x.db.profile.frames) do
-			local frame = x.frames[framename]
-			frame:Clear()
-		end
-	else
-		local frame = x.frames[specificFrame]
-		frame:Clear()
-	end
+    if not specificFrame then
+        for framename, settings in pairs(x.db.profile.frames) do
+            local frame = x.frames[framename]
+            if frame then
+                frame:Clear()
+            end
+        end
+    else
+        local frame = x.frames[specificFrame]
+        if frame then
+            frame:Clear()
+        end
+    end
 end
 
 -- =====================================================
@@ -290,9 +305,13 @@ end
 --		Sends a message to the framename specified.
 -- =====================================================
 function x:AddMessage(framename, message, colorname)
+	-- Guard: Abbrechen, wenn DB noch nicht vollständig geladen ist (verhindert Login-Crashs)
+	if not x.db or not x.db.profile or not x.db.profile.frames then return end
+	-- Guard: Keine Warnung bei nil Farben während Initialisierung
+	if colorname == nil then return end
+
 	local frame = x.frames[framename]
 	local frameOptions = x.db.profile.frames[framename]
-
 	-- Make sure we have a valid frame
 	if not frameOptions then print("xct+ frame name not found:", framename) return end
 
@@ -303,18 +322,19 @@ function x:AddMessage(framename, message, colorname)
 	if frame then
 		-- Load the color
 		local r, g, b = 1, 1, 1
-		if type(colorname) == "table" then
+		if colorRGBCache[colorname] then
+			r, g, b = unpack(colorRGBCache[colorname])
+		elseif type(colorname) == "table" then
 			r, g, b = unpack(colorname)
+			colorRGBCache[colorname] = {r, g, b}
+		elseif x.LookupColorByName(colorname) then
+			r, g, b = unpack(x.LookupColorByName(colorname))
+			colorRGBCache[colorname] = {r, g, b}
+		elseif x.colors[colorname] then
+			r, g, b = unpack(x.colors[colorname])
+			colorRGBCache[colorname] = {r, g, b}
 		else
-			if not x.colors[colorname] then
-				if x.LookupColorByName(colorname) then
-					r, g, b = unpack( x.LookupColorByName(colorname) )
-				else
-					print("FRAME:", framename,"  xct+ says there is no color named:", colorname)
-				end
-			else
-				r, g, b = unpack(x.colors[colorname])
-			end
+			print("FRAME:", framename,"  xct+ says there is no color named:", colorname)
 		end
 
 		-- make sure the frame is enabled
@@ -789,8 +809,6 @@ function x.EndConfigMode()
 		-- Set the Frame Strata
 		f:SetFrameStrata(ssub(x.db.profile.frameSettings.frameStrata, 2))
 	end
-
-	collectgarbage()
 end
 
 function x.ToggleConfigMode()

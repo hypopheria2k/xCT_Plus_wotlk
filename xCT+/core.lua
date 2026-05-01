@@ -8,12 +8,14 @@
 
  [=====================================]
  [  Author: Dandruff @ Whisperwind-US  ]
- [  xCT+ Version 3.x.x                 ]
+ [  xCT+ Version 3.8.5                 ]
  [  ©2012. All Rights Reserved.        ]
  [====================================]]
 
 -- Get Addon's name and Blizzard's Addon Stub
 local AddonName, addon = ...
+
+addon.version = "3.8.5"
 
 local sgsub, ipairs, pairs, type, string_format, table_insert, table_remove, table_sort, print, tostring, tonumber, select, string_lower, collectgarbage, string_match =
   string.gsub, ipairs, pairs, type, string.format, table.insert, table.remove, table.sort, print, tostring, tonumber, select, string.lower, collectgarbage, string.match
@@ -45,14 +47,14 @@ local x = addon.engine
 
 -- Profile Updated, need to refresh important stuff
 local function RefreshConfig()
+  -- Guard: Abbrechen, wenn Frames noch nicht geladen sind
+  if not x.db or not x.db.profile or not x.db.profile.frames then return end
   -- Clean up the Profile
   x:CompatibilityLogic()
 
   x:UpdateFrames()
   x:UpdateSpamSpells()
   x:UpdateItemTypes()
-
-  collectgarbage()
 end
 
 -- Handle Addon Initialized
@@ -112,8 +114,9 @@ end
 local frameUpdate = CreateFrame("FRAME")
 frameUpdate:RegisterEvent("PLAYER_ENTERING_WORLD")
 frameUpdate:SetScript("OnEvent", function(self)
-  self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-  x:UpdateFrames()
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+	x.GenerateColorOptions() -- ✅ Farben ZUERST initialisieren!
+	x:UpdateFrames()
 end)
 
 -- This function was created as the centeral location for crappy code
@@ -391,6 +394,7 @@ end
 
 -- Update the combo point list
 function x:UpdateComboPointOptions(force)
+  if not addon.options or not addon.options.args or not addon.options.args.Frames then return end
   if x.LOADED_COMBO_POINTS_OPTIONS and not force then return end
   local myClass, offset = x.player.class, 2
 
@@ -931,6 +935,7 @@ end
 
 -- Generate Colors for each Frame
 function x.GenerateColorOptions()
+  if not addon.options or not addon.options.args or not addon.options.args.Frames then return end
   for name, settings in pairs(x.db.profile.frames) do
     local options = addon.options.args.Frames.args[name]
     if settings.colors then

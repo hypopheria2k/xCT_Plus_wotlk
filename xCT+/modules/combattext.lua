@@ -8,7 +8,7 @@
 
  [=====================================]
  [  Author: Dandruff @ Whisperwind-US  ]
- [  xCT+ Version 3.x.x                 ]
+ [  xCT+ Version 3.8.5                 ]
  [  ©2012. All Rights Reserved.        ]
  [====================================]]
 
@@ -17,9 +17,13 @@ local ADDON_NAME, addon = ...
 -- Shorten my handle
 local x = addon.engine
 
+local GetTime, UnitExists, GetSpellInfo, GetSpellTexture = GetTime, UnitExists, GetSpellInfo, GetSpellTexture
+
 -- up values
 local _, _G, sformat, mfloor, ssub, smatch, sgsub, s_upper, s_lower, string, tinsert, ipairs, pairs, print, tostring, tonumber, select, unpack =
   nil, _G, string.format, math.floor, string.sub, string.match, string.gsub, string.upper, string.lower, string, table.insert, ipairs, pairs, print, tostring, tonumber, select, unpack
+
+local lootRemoveCache = {}
 
 --[=====================================================[
  Holds cached spells, buffs, and debuffs
@@ -128,7 +132,7 @@ function x:UpdateCombatTextEvents(enable)
 end
 
 --[=====================================================[
- Fast Boolean Lookups
+ Fast Boolean Lookups (Fully Nil-Safe)
 --]=====================================================]
 local function ShowMissTypes() return COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1" end
 local function ShowResistances() return COMBAT_TEXT_SHOW_RESISTANCES == "1" end
@@ -138,131 +142,119 @@ local function ShowReactives() return COMBAT_TEXT_SHOW_REACTIVES == "1" end
 local function ShowLowResources() return COMBAT_TEXT_SHOW_LOW_HEALTH_MANA == "1" end
 local function ShowCombatState() return COMBAT_TEXT_SHOW_COMBAT_STATE == "1" end
 local function ShowFriendlyNames() return COMBAT_TEXT_SHOW_FRIENDLY_NAMES == "1" end
-local function ShowColoredFriendlyNames() return x.db.profile.frames["healing"].enableClassNames end
-local function ShowHealingRealmNames() return x.db.profile.frames["healing"].enableRealmNames end
-local function ShowDamage() return x.db.profile.frames["outgoing"].enableOutDmg end
-local function ShowHealing() return x.db.profile.frames["outgoing"].enableOutHeal end
-local function ShowPetDamage() return x.db.profile.frames["outgoing"].enablePetDmg end
-local function ShowAutoAttack() return x.db.profile.frames["outgoing"].enableAutoAttack end
-local function ShowDots() return x.db.profile.frames["outgoing"].enableDotDmg end
-local function ShowHots() return x.db.profile.frames["outgoing"].enableHots end
-local function ShowImmunes() return x.db.profile.frames["outgoing"].enableImmunes end -- outgoing immunes
-local function ShowMisses() return x.db.profile.frames["outgoing"].enableMisses end -- outgoing misses
-local function ShowSwingCrit() return x.db.profile.frames["critical"].showSwing end
-local function ShowSwingCritPrefix() return x.db.profile.frames["critical"].prefixSwing end
-local function ShowLootItems() return x.db.profile.frames["loot"].showItems end
-local function ShowLootItemTypes() return x.db.profile.frames["loot"].showItemTypes end
-local function ShowLootMoney() return x.db.profile.frames["loot"].showMoney end
-local function ShowTotalItems() return x.db.profile.frames["loot"].showItemTotal end
-local function ShowLootCrafted() return x.db.profile.frames["loot"].showCrafted end
-local function ShowLootQuest() return x.db.profile.frames["loot"].showQuest end
-local function ShowColorBlindMoney() return x.db.profile.frames["loot"].colorBlindMoney end
-local function GetLootQuality() return x.db.profile.frames["loot"].filterItemQuality end
-local function ShowLootIcons() return x.db.profile.frames["loot"].iconsEnabled end
-local function GetLootIconSize() return x.db.profile.frames["loot"].iconsSize end
-local function ShowInterrupts() return x.db.profile.frames["general"].showInterrupts end
-local function ShowDispells() return x.db.profile.frames["general"].showDispells end
-local function ShowPartyKill() return x.db.profile.frames["general"].showPartyKills end
-local function ShowBuffs() return x.db.profile.frames["general"].showBuffs end
-local function ShowDebuffs() return x.db.profile.frames["general"].showDebuffs end
-local function ShowOverHealing() return x.db.profile.frames["healing"].enableOverHeal end
 
-local function ShowRogueComboPoints() return x.db.profile.spells.combo["ROGUE"][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "ROGUE" end
-local function ShowFeralComboPoints() return x.db.profile.spells.combo["DRUID"][2][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "DRUID" and x.player.spec == 2 end
-local function ShowMonkChi() return x.db.profile.spells.combo["MONK"][CHI] and x.player.class == "MONK" end
-local function ShowPaladinHolyPower() return x.db.profile.spells.combo["PALADIN"][HOLY_POWER] and x.player.class == "PALADIN" end
-local function ShowPriestShadowOrbs() return x.db.profile.spells.combo["PRIEST"][3][SHADOW_ORBS] and x.player.class == "PRIEST" and x.player.spec == 3 end
-local function ShowWarlockSoulShards() return x.db.profile.spells.combo["WARLOCK"][1][SOUL_SHARDS] and x.player.class == "WARLOCK" and x.player.spec == 1 end
-local function ShowWarlockDemonicFury() return x.db.profile.spells.combo["WARLOCK"][2][DEMONIC_FURY] and x.player.class == "WARLOCK" and x.player.spec == 2 end
-local function ShowWarlockBurningEmbers() return x.db.profile.spells.combo["WARLOCK"][3][BURNING_EMBERS] and x.player.class == "WARLOCK" and x.player.spec == 3 end
+-- Frame Settings (Safe DB Access)
+local function ShowColoredFriendlyNames() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["healing"] and x.db.profile.frames["healing"].enableClassNames end
+local function ShowHealingRealmNames() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["healing"] and x.db.profile.frames["healing"].enableRealmNames end
+local function ShowDamage() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableOutDmg end
+local function ShowHealing() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableOutHeal end
+local function ShowPetDamage() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enablePetDmg end
+local function ShowAutoAttack() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableAutoAttack end
+local function ShowDots() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableDotDmg end
+local function ShowHots() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableHots end
+local function ShowImmunes() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableImmunes end
+local function ShowMisses() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].enableMisses end
+local function ShowSwingCrit() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["critical"] and x.db.profile.frames["critical"].showSwing end
+local function ShowSwingCritPrefix() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["critical"] and x.db.profile.frames["critical"].prefixSwing end
+local function ShowLootItems() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showItems end
+local function ShowLootItemTypes() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showItemTypes end
+local function ShowLootMoney() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showMoney end
+local function ShowTotalItems() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showItemTotal end
+local function ShowLootCrafted() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showCrafted end
+local function ShowLootQuest() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].showQuest end
+local function ShowColorBlindMoney() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].colorBlindMoney end
+local function GetLootQuality() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].filterItemQuality end
+local function ShowLootIcons() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].iconsEnabled end
+local function GetLootIconSize() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["loot"] and x.db.profile.frames["loot"].iconsSize end
+local function ShowInterrupts() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["general"] and x.db.profile.frames["general"].showInterrupts end
+local function ShowDispells() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["general"] and x.db.profile.frames["general"].showDispells end
+local function ShowPartyKill() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["general"] and x.db.profile.frames["general"].showPartyKills end
+local function ShowBuffs() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["general"] and x.db.profile.frames["general"].showBuffs end
+local function ShowDebuffs() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["general"] and x.db.profile.frames["general"].showDebuffs end
+local function ShowOverHealing() return x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["healing"] and x.db.profile.frames["healing"].enableOverHeal end
 
-local function ClearWhenLeavingCombat() return x.db.profile.frameSettings.clearLeavingCombat end
+-- Combo Points (Safe DB Access)
+local function ShowRogueComboPoints() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["ROGUE"] and x.db.profile.spells.combo["ROGUE"][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "ROGUE" end
+local function ShowFeralComboPoints() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["DRUID"] and x.db.profile.spells.combo["DRUID"][2] and x.db.profile.spells.combo["DRUID"][2][COMBAT_TEXT_SHOW_COMBO_POINTS_TEXT] and x.player.class == "DRUID" and x.player.spec == 2 end
+local function ShowMonkChi() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["MONK"] and x.db.profile.spells.combo["MONK"][CHI] and x.player.class == "MONK" end
+local function ShowPaladinHolyPower() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["PALADIN"] and x.db.profile.spells.combo["PALADIN"][HOLY_POWER] and x.player.class == "PALADIN" end
+local function ShowPriestShadowOrbs() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["PRIEST"] and x.db.profile.spells.combo["PRIEST"][3] and x.db.profile.spells.combo["PRIEST"][3][SHADOW_ORBS] and x.player.class == "PRIEST" and x.player.spec == 3 end
+local function ShowWarlockSoulShards() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["WARLOCK"] and x.db.profile.spells.combo["WARLOCK"][1] and x.db.profile.spells.combo["WARLOCK"][1][SOUL_SHARDS] and x.player.class == "WARLOCK" and x.player.spec == 1 end
+local function ShowWarlockDemonicFury() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["WARLOCK"] and x.db.profile.spells.combo["WARLOCK"][2] and x.db.profile.spells.combo["WARLOCK"][2][DEMONIC_FURY] and x.player.class == "WARLOCK" and x.player.spec == 2 end
+local function ShowWarlockBurningEmbers() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.combo and x.db.profile.spells.combo["WARLOCK"] and x.db.profile.spells.combo["WARLOCK"][3] and x.db.profile.spells.combo["WARLOCK"][3][BURNING_EMBERS] and x.player.class == "WARLOCK" and x.player.spec == 3 end
 
-local function MergeIncomingHealing() return x.db.profile.spells.mergeHealing end
-local function MergeMeleeSwings() return x.db.profile.spells.mergeSwings end
-local function MergeRangedAttacks() return x.db.profile.spells.mergeRanged end
-local function MergeCriticalsWithOutgoing() return x.db.profile.spells.mergeCriticalsWithOutgoing end
-local function MergeCriticalsByThemselves() return x.db.profile.spells.mergeCriticalsByThemselves end
-local function MergeDontMergeCriticals() return x.db.profile.spells.mergeDontMergeCriticals end
-local function MergeDispells() return x.db.profile.spells.mergeDispells end
+-- Global Settings (Safe DB Access)
+local function ClearWhenLeavingCombat() return x.db and x.db.profile and x.db.profile.frameSettings and x.db.profile.frameSettings.clearLeavingCombat end
+local function MergeIncomingHealing() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeHealing end
+local function MergeMeleeSwings() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeSwings end
+local function MergeRangedAttacks() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeRanged end
+local function MergeCriticalsWithOutgoing() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeCriticalsWithOutgoing end
+local function MergeCriticalsByThemselves() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeCriticalsByThemselves end
+local function MergeDontMergeCriticals() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeDontMergeCriticals end
+local function MergeDispells() return x.db and x.db.profile and x.db.profile.spells and x.db.profile.spells.mergeDispells end
 
-local function FilterPlayerPower(value) return x.db.profile.spellFilter.filterPowerValue > value end
-local function FilterOutgoingDamage(value) return x.db.profile.spellFilter.filterOutgoingDamageValue > value end
-local function FilterOutgoingHealing(value) return x.db.profile.spellFilter.filterOutgoingHealingValue > value end
-local function FilterIncomingDamage(value) return x.db.profile.spellFilter.filterIncomingDamageValue > value end
-local function FilterIncomingHealing(value) return x.db.profile.spellFilter.filterIncomingHealingValue > value end
-local function TrackSpells() return x.db.profile.spellFilter.trackSpells end
+-- Filter Thresholds (Safe DB + Number Guard)
+local function FilterPlayerPower(value) local v = x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.filterPowerValue; return v and v > value or false end
+local function FilterOutgoingDamage(value) local v = x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.filterOutgoingDamageValue; return v and v > value or false end
+local function FilterOutgoingHealing(value) local v = x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.filterOutgoingHealingValue; return v and v > value or false end
+local function FilterIncomingDamage(value) local v = x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.filterIncomingDamageValue; return v and v > value or false end
+local function FilterIncomingHealing(value) local v = x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.filterIncomingHealingValue; return v and v > value or false end
+local function TrackSpells() return x.db and x.db.profile and x.db.profile.spellFilter and x.db.profile.spellFilter.trackSpells end
 
 local function IsBearForm() return GetShapeshiftForm() == 1 and x.player.class == "DRUID" end
+
+-- Spell/Aura/Item Filters (Safe DB Access)
 local function IsSpellFiltered(spellID)
+  if not x.db or not x.db.profile or not x.db.profile.spellFilter then return false end
   local spell = x.db.profile.spellFilter.listSpells[tostring(spellID)]
-  if x.db.profile.spellFilter.whitelistSpells then
-    return not spell
-  end
+  if x.db.profile.spellFilter.whitelistSpells then return not spell end
   return spell
 end
 local function IsBuffFiltered(name)
+  if not x.db or not x.db.profile or not x.db.profile.spellFilter then return false end
   local spell = x.db.profile.spellFilter.listBuffs[name]
-  if x.db.profile.spellFilter.whitelistBuffs then
-    return not spell
-  end
+  if x.db.profile.spellFilter.whitelistBuffs then return not spell end
   return spell
 end
 local function IsDebuffFiltered(name)
+  if not x.db or not x.db.profile or not x.db.profile.spellFilter then return false end
   local spell = x.db.profile.spellFilter.listDebuffs[name]
-  if x.db.profile.spellFilter.whitelistDebuffs then
-    return not spell
-  end
+  if x.db.profile.spellFilter.whitelistDebuffs then return not spell end
   return spell
 end
 local function IsProcFiltered(name)
+  if not x.db or not x.db.profile or not x.db.profile.spellFilter then return false end
   local spell = x.db.profile.spellFilter.listProcs[name]
-  if x.db.profile.spellFilter.whitelistProcs then
-    return not spell
-  end
+  if x.db.profile.spellFilter.whitelistProcs then return not spell end
   return spell
 end
 local function IsItemFiltered(name)
+  if not x.db or not x.db.profile or not x.db.profile.spellFilter then return false end
   local spell = x.db.profile.spellFilter.listItems[name]
-  if x.db.profile.spellFilter.whitelistItems then
-    return not spell
-  end
+  if x.db.profile.spellFilter.whitelistItems then return not spell end
   return spell
 end
 
+-- Merger Logic (Safe DB Access)
 local function IsMerged(spellID)
-	return ( x.db.profile.spells.enableMerger ) and
-		(	-- Check to see if it is a merged spell
-			x.db.profile.spells.merge[spellID] and
-			x.db.profile.spells.merge[spellID].enabled
-		)
-		or
-		(	-- Check to see if it is a two hand weapon
-			addon.merge2h[spellID] and
-			x.db.profile.spells.merge[addon.merge2h[spellID]] and
-			x.db.profile.spells.merge[addon.merge2h[spellID]].enabled
-		)
+  if not x.db or not x.db.profile or not x.db.profile.spells then return false end
+  return ( x.db.profile.spells.enableMerger ) and
+    ( x.db.profile.spells.merge[spellID] and x.db.profile.spells.merge[spellID].enabled )
+    or
+    ( addon.merge2h[spellID] and x.db.profile.spells.merge[addon.merge2h[spellID]] and x.db.profile.spells.merge[addon.merge2h[spellID]].enabled )
 end
 
-local function UseStandardSpellColors() return not x.db.profile.frames["outgoing"].standardSpellColor end
+-- Color Logic (Safe DB Access)
+local function UseStandardSpellColors() return not (x.db and x.db.profile and x.db.profile.frames and x.db.profile.frames["outgoing"] and x.db.profile.frames["outgoing"].standardSpellColor) end
 local function GetCustomSpellColorFromIndex(index)
-	if index == 1 then
-    return x.LookupColorByName('SpellSchool_Physical')
-	elseif index == 2 then
-    return x.LookupColorByName('SpellSchool_Holy')
-	elseif index == 4 then
-    return x.LookupColorByName('SpellSchool_Fire')
-	elseif index == 8 then
-    return x.LookupColorByName('SpellSchool_Nature')
-	elseif index == 16 then
-    return x.LookupColorByName('SpellSchool_Frost')
-	elseif index == 32 then
-    return x.LookupColorByName('SpellSchool_Shadow')
-	elseif index == 64 then
-    return x.LookupColorByName('SpellSchool_Arcane')
-	else
-    return x.LookupColorByName('SpellSchool_Physical')
-	end
+  if index == 1 then return x.LookupColorByName('SpellSchool_Physical')
+  elseif index == 2 then return x.LookupColorByName('SpellSchool_Holy')
+  elseif index == 4 then return x.LookupColorByName('SpellSchool_Fire')
+  elseif index == 8 then return x.LookupColorByName('SpellSchool_Nature')
+  elseif index == 16 then return x.LookupColorByName('SpellSchool_Frost')
+  elseif index == 32 then return x.LookupColorByName('SpellSchool_Shadow')
+  elseif index == 64 then return x.LookupColorByName('SpellSchool_Arcane')
+  else return x.LookupColorByName('SpellSchool_Physical') end
 end
 
 BATTLE_PET_CAGE_ITEM_NAME = "Caged %s"
@@ -320,6 +312,8 @@ local COMBATLOG_FILTER_MY_VEHICLE = bit.bor( COMBATLOG_OBJECT_AFFILIATION_MINE,
   to go.
 --]=====================================================]
 function x.OnCombatTextEvent(self, event, ...)
+  -- Guard: Abbrechen, wenn DB noch nicht bereit ist (verhindert Login-Crashs)
+  if not x.db or not x.db.profile or not x.db.profile.frames then return end
   if event == "COMBAT_LOG_EVENT_UNFILTERED" then
     local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1, ...)
     local spellID = select(9, ...)
@@ -430,6 +424,15 @@ function x:GetSpellTextureFormatted(spellID, iconSize)
   if spellID == 0 or spellID == PET_ATTACK_TEXTURE then
     message = sformat(format_spell_icon, PET_ATTACK_TEXTURE, iconSize, iconSize)
   else
+    if not x.spellCache.textures then x.spellCache.textures = {} end
+    if x.spellCache.textures[spellID] then
+      message = sformat(format_spell_icon, x.spellCache.textures[spellID], iconSize, iconSize)
+      if x.db.profile.spells.enableMergerDebug then
+        message = message .. " |cffFFFFFF[|cffFF0000ID:|r|cffFFFF00" .. spellID .. "|r]|r"
+      end
+      return message
+    end
+
     local spellName, _, fallbackTexture = GetSpellInfo(spellID)
     local icon = GetSpellTexture(spellName)
 
@@ -442,6 +445,8 @@ function x:GetSpellTextureFormatted(spellID, iconSize)
     else
       message = sformat(format_spell_icon, x.BLANK_ICON, iconSize, iconSize)
     end
+
+    x.spellCache.textures[spellID] = icon
   end
 
   if x.db.profile.spells.enableMergerDebug then
@@ -600,22 +605,22 @@ end
  Looted Item - Latency Update Adpation
 --]=====================================================]
 local function LootFrame_OnUpdate(self, elapsed)
-  local removeItems = { }
+  wipe(lootRemoveCache)
   for i, item in ipairs(self.items) do
     item.t = item.t + elapsed
 
     -- Time to wait before showing a looted item
     if item.t > 0.5 then
       x:AddMessage("loot", sformat(item.message, sformat(format_lewtz_total, GetItemCount(item.id))), {item.r, item.g, item.b})
-      removeItems[i] = true
+      lootRemoveCache[i] = true
     end
   end
 
-  for k in pairs(removeItems) do
+  for k in pairs(lootRemoveCache) do
     self.items[k] = nil
   end
 
-  if #removeItems > 1 then
+  if #lootRemoveCache > 1 then
     local index, newList = 1, { }
 
     -- Rebalance the Lua list
@@ -1022,6 +1027,7 @@ x.events = {
   ["UNIT_ENTERED_VEHICLE"] = function(unit) if unit == "player" then x:UpdatePlayer() end end,
   ["UNIT_EXITING_VEHICLE"] = function(unit) if unit == "player" then x:UpdatePlayer() end end,
   ["PLAYER_ENTERING_WORLD"] = function()
+      x.guardianOwner = {}
       x:UpdatePlayer()
       x:UpdateComboPointOptions()
       x:Clear()
@@ -1184,6 +1190,10 @@ x.outgoing_events = {
         message = x:Abbreviate(message, "outgoing")
       end
 
+      if ShowOverHealing() and overhealing > 0 then
+        message = xCT_Plus_L["Overheal format"]:format(message, x:Abbreviate(overhealing, "outgoing"))
+      end
+
       -- Add Icons
       if x.db.profile.frames[outputFrame].iconsEnabled then
         if x.db.profile.frames[outputFrame].fontJustify == "LEFT" then
@@ -1248,6 +1258,10 @@ x.outgoing_events = {
         return
       else
         message = x:Abbreviate(message, "outgoing")
+      end
+
+      if ShowOverHealing() and overhealing > 0 then
+        message = xCT_Plus_L["Overheal format"]:format(message, x:Abbreviate(overhealing, "outgoing"))
       end
 
       -- Add Icons

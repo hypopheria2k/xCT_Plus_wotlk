@@ -2,7 +2,7 @@
 ## Title: xCT+
 ## Notes: An Add-On that enhances and out-performs the default Floating Combat Text!
 ## Author: Dandruff (Hypopheria Remaster)
-## Version: 3.8.0
+## Version: 3.8.5
 ## RequiredDeps: Blizzard_CombatText
 ## SavedVariables: xCTSavedDB
 

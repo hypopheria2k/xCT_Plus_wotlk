@@ -8,7 +8,7 @@
 
  [=====================================]
  [  Author: Dandruff @ Whisperwind-US  ]
- [  xCT+ Version 3.x.x                 ]
+ [  xCT+ Version 3.8.5                 ]
  [  ©2012. All Rights Reserved.        ]
  [====================================]]
 

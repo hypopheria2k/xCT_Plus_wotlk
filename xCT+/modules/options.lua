@@ -8,7 +8,7 @@
 
  [=====================================]
  [  Author: Dandruff @ Whisperwind-US  ]
- [  xCT+ Version 3.3.5a                ]
+ [  xCT+ Version 3.8.5                 ]
  [  2012. All Rights Reserved.         ]
  [  Reworked and Remasteres by         ]
  [  Hypopheria 2026 for 3.3.5a         ]
@@ -1080,7 +1080,7 @@ addon.options.args["Credits"] = {
       type = 'description',
       order = 5,
       fontSize = "medium",
-      name = "This is a Pandaria(5.4.8) |cff22FF80xCT+ 3.7.1|r remaster by |cffAAAAFF Hypopheria 2026|r, any questions/issues should be sent to me on my GitHub repo",
+      name = "This is a WotLK(3.3.5a) |cff22FF80xCT+ "..(addon.version or "3.8.5").."|r remaster by |cffAAAAFF Hypopheria 2026|r, any questions/issues should be sent to me on my GitHub repo",
     },
     testerTitleSpace2 = {
       type = 'description',
